@@ -1,28 +1,118 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/Logo.png";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const user = useSelector((store) => store.user);
+  const [showDropdownContent, setShowDropdownContent] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdownContent(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (e.key === "Escape") {
+        setShowDropdownContent(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscapeKey);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    setShowDropdownContent(false);
+  };
+
   return (
-    <nav className=" bg-[#bbe5ec] w-full h-16 p-2 flex items-center justify-between">
+    <nav className="bg-[#bbe5ec] w-full h-16 p-2 flex items-center justify-between">
       <div className="flex-1">
         <button className="px-4 cursor-pointer">
-          <img src={logo} alt="DevTinder Logo" className="h-10" w-auto></img>
+          <img src={logo} alt="DevTinder Logo" className="h-10 w-auto" />
         </button>
       </div>
-      <div className="flex justify-between gap-2">
-        <input
-          className="border border-gray-400 rounded-lg px-3 py-2 outline-none focus:border-[#196293] focus:ring-1 focus:ring-[#196293]"
-          type="text"
-          placeholder="Search"
-        />
-        <div className="w-12 h-12 rounded-full flex items-center justify-center gap-2">
-          <img
-            className="border-white rounded-full"
-            src="https://media.licdn.com/dms/image/v2/D4D03AQFspVrUnRn2aw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1695533019952?e=2147483647&v=beta&t=xiIP0JMk3CrGUKqWsITB9NC0cjdSjHg29LxA3FxIBx8"
-            alt="sujeet_sahu"
+
+      {user && (
+        <div className="flex justify-between gap-2">
+          <input
+            className="border border-gray-400 rounded-lg px-3 py-2 outline-none focus:border-[#196293] focus:ring-1 focus:ring-[#196293]"
+            type="text"
+            placeholder="Search"
           />
+
+          {/* Avatar + Dropdown */}
+          <div
+            ref={dropdownRef}
+            className="relative w-12 h-12 rounded-full flex items-center justify-center"
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setShowDropdownContent((prev) => !prev);
+              }}
+              aria-haspopup="menu"
+              aria-expanded={showDropdownContent}
+              className="cursor-pointer"
+            >
+              <img
+                className="border-white rounded-full"
+                src={user.photoUrl}
+                alt="User menu"
+              />
+            </button>
+
+            <div
+              className={`
+                absolute top-13 right-0 w-40 rounded-lg p-2 shadow bg-white
+                transition-all duration-200 ease-out
+                ${
+                  showDropdownContent
+                    ? "opacity-100 scale-100 visible"
+                    : "opacity-0 scale-95 invisible"
+                }
+              `}
+            >
+              <ul className="flex flex-col gap-1">
+                <li className="rounded-sm transition-colors duration-200 hover:bg-[#196293] hover:text-white">
+                  <Link
+                    to="/profile"
+                    onClick={() => setShowDropdownContent(false)}
+                    className="block w-full p-2"
+                  >
+                    Profile
+                  </Link>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full text-left p-2 rounded-sm hover:bg-[#196293] hover:text-white transition-colors duration-200 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };

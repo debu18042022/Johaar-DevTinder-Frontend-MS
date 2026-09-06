@@ -8,3 +8,14 @@
 - Create BrowserRouter > Routes > Route=/ Body > RouteChildren
 - Create an Outlet in your Body Component
 - Create a Footer Component
+- Create a Login Page
+- Install Axios
+- CORS - install cors in backend => add middleware to with configuration: origin, credentials:true
+- Whenever you're making API call so pass axios => { withCredentials: true }
+- Install react-redux + @reduxjs/toolkit => configure store => Provider => Create a Redux State Slice => add reducer to store
+- Add redux devtools extension to chrome
+- login and see if your data coming properly in the store
+- navbar should update as soon as user logs in 
+- Refactor our code to add constants file + create a components folder
+- You should be access other routes without login
+- If token is not present redirect user to login page
