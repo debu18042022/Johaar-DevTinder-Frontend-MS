@@ -1,12 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
 import logo from "../assets/Logo.png";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
+import { removeUser } from "../utils/userSlice";
+import axios from "axios";
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
   const [showDropdownContent, setShowDropdownContent] = useState(false);
   const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -36,8 +41,17 @@ const Navbar = () => {
     };
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const res = await axios.post(
+      `${BASE_URL}/logout`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+    dispatch(removeUser());
     setShowDropdownContent(false);
+    navigate("/login");
   };
 
   return (

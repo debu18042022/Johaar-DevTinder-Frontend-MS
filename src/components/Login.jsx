@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [emailId, setEmailId] = useState("sujeet@gmail.com");
   const [password, setPassword] = useState("Sujeet@1234");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -31,6 +32,7 @@ const Login = () => {
       dispatch(addUser(loggedInUser));
       navigate("/");
     } catch (error) {
+      setError(error?.response?.data);
       console.error("Login error:", error);
     }
   };
@@ -80,6 +82,8 @@ const Login = () => {
             Login
           </button>
         </form>
+
+        <p className="text-red-600 mt-2">{error} </p>
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don't have an account?{" "}
