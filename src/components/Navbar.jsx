@@ -55,7 +55,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#bbe5ec] w-full h-16 p-2 flex items-center justify-between">
+    <nav className="w-full h-16 flex items-center justify-between p-2 bg-[#bbe5ec] ">
       <div className="flex-1">
         <button className="px-4 cursor-pointer">
           <img src={logo} alt="DevTinder Logo" className="h-10 w-auto" />
