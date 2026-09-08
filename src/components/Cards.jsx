@@ -2,13 +2,13 @@ import React from "react";
 
 const Cards = ({ user }) => {
   return (
-    <div className="w-80 h-112.5 overflow-hidden rounded-2xl bg-white shadow-xl">
+    <div className="w-80 h-[520px] overflow-hidden rounded-2xl bg-white shadow-xl">
       {/* Profile Image */}
       <div className="relative h-80">
         <img
           src={user.photoUrl}
           alt={`${user.firstName} ${user.lastName}`}
-          className="h-full w-full object-cover"
+          className="h-full w-full"
         />
 
         {/* Gradient overlay */}
@@ -18,11 +18,7 @@ const Cards = ({ user }) => {
         <div className="absolute bottom-4 left-5 text-white">
           <h2 className="text-2xl font-semibold">
             {user.firstName} {user.lastName}
-            {user.age && (
-              <span className="ml-2 font-normal">
-                {user.age}
-              </span>
-            )}
+            {user.age && <span className="ml-2 font-normal">{user.age}</span>}
           </h2>
 
           {user.gender && (
@@ -34,7 +30,7 @@ const Cards = ({ user }) => {
       </div>
 
       {/* Profile Details */}
-      <div className="p-5">
+      <div className="h-50 p-5 overflow-auto [ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
         {/* About */}
         {user.about && (
           <div className="mb-5">
@@ -42,9 +38,7 @@ const Cards = ({ user }) => {
               About
             </h3>
 
-            <p className="text-sm leading-6 text-gray-700">
-              {user.about}
-            </p>
+            <p className="text-sm leading-6 text-gray-700">{user.about}</p>
           </div>
         )}
 

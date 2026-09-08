@@ -87,10 +87,10 @@ const Navbar = () => {
               }}
               aria-haspopup="menu"
               aria-expanded={showDropdownContent}
-              className="cursor-pointer"
+              className="cursor-pointer h-[inherit] w-[inherit]"
             >
               <img
-                className="border-white rounded-full"
+                className="border-white rounded-full h-[inherit] w-[inherit]"
                 src={user.photoUrl}
                 alt="User menu"
               />
@@ -98,7 +98,7 @@ const Navbar = () => {
 
             <div
               className={`
-                absolute top-13 right-0 w-40 rounded-lg p-2 shadow bg-white
+                absolute top-13 right-0 z-1 w-40 rounded-lg p-2 shadow bg-white
                 transition-all duration-200 ease-out
                 ${
                   showDropdownContent

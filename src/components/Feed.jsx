@@ -42,7 +42,6 @@ const Feed = () => {
         { withCredentials: true },
       );
       dispatch(removeFeed(_id));
-      setCurrentIndex((prev) => prev + 1);
     } catch (err) {
       console.error(err.response.data);
     }

@@ -69,7 +69,7 @@ const EditProfile = ({ user }) => {
       </div>
 
       <form onSubmit={saveProfile} className="flex flex-1 min-h-0 flex-col">
-        <div className="flex-1 min-h-0 overflow-y-auto px-6">
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 scrollbar-none">
           <div className="flex flex-col gap-4">
             {/* First Name - Notice the matching 'name' attribute */}
             <div className="flex flex-col gap-1">
@@ -169,7 +169,7 @@ const EditProfile = ({ user }) => {
                 value={formData.about}
                 onChange={handleChange}
                 rows={4}
-                className="resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-[#196293] focus:ring-1 focus:ring-[#196293]"
+                className="resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none transition focus:border-[#196293] focus:ring-1 focus:ring-[#196293] scrollbar-thin"
               />
             </div>
 
@@ -190,7 +190,7 @@ const EditProfile = ({ user }) => {
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full rounded-lg bg-[#196293] px-4 py-2 font-medium text-white transition hover:bg-[#15527d] disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-lg bg-[#196293] px-4 py-2 font-medium text-white transition hover:bg-[#15527d] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {isSaving ? "Saving..." : "Save Changes"}
           </button>
