@@ -2,7 +2,7 @@ import React from "react";
 
 const Cards = ({ user }) => {
   return (
-    <div className="w-80 h-[520px] overflow-hidden rounded-2xl bg-white shadow-xl">
+    <div className="w-80 h-112.5 overflow-hidden rounded-2xl bg-white shadow-xl">
       {/* Profile Image */}
       <div className="relative h-80">
         <img
@@ -12,7 +12,7 @@ const Cards = ({ user }) => {
         />
 
         {/* Gradient overlay */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/70 to-transparent" />
 
         {/* Name + Age */}
         <div className="absolute bottom-4 left-5 text-white">
