@@ -57,7 +57,12 @@ const Navbar = () => {
   return (
     <nav className="w-full h-16 flex items-center justify-between p-2 bg-[#bbe5ec] ">
       <div className="flex-1">
-        <button className="px-4 cursor-pointer">
+        <button
+          className="px-4 cursor-pointer"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
           <img src={logo} alt="DevTinder Logo" className="h-10 w-auto" />
         </button>
       </div>
@@ -113,6 +118,24 @@ const Navbar = () => {
                   </Link>
                 </li>
 
+                <li className="rounded-sm transition-colors duration-200 hover:bg-[#196293] hover:text-white">
+                  <Link
+                    to="/connections"
+                    onClick={() => setShowDropdownContent(false)}
+                    className="block w-full p-2"
+                  >
+                    Connections
+                  </Link>
+                </li>
+                <li className="rounded-sm transition-colors duration-200 hover:bg-[#196293] hover:text-white">
+                  <Link
+                    to="/request"
+                    onClick={() => setShowDropdownContent(false)}
+                    className="block w-full p-2"
+                  >
+                    Requests
+                  </Link>
+                </li>
                 <li>
                   <button
                     type="button"
