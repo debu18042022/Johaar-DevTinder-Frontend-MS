@@ -24,10 +24,11 @@
 - SignUp on AWS
 - Launch instance
 - chmod 400 <secret> .pem  i.e chmod 400 "devTinder-secret.pem"
-- ssh -i "devTinder-secret.pem" ubuntu@ec2-52-66-238-245.ap-south-1.compute.amazonaws.com
+- # First Login to your ubuntu machine
+- ssh -i "<your-key>.pem" ubuntu@<your-ec2-public-dns>  E.g. ssh -i "my-key.pem" ubuntu@ec2-203-0-113-10.ap-south-1.compute.amazonaws.com
 - Install exact node version as local
 - git clone
-- FRONTEND (go to your frontend applicatio folder like cd Johaar-DevTinder-Frontend-MS)
+- FRONTEND (go to your frontend application folder like cd Johaar-DevTinder-Frontend-MS)
     -npm install -> (install dependencies)
     -npm run build
     -sudo apt update
@@ -35,7 +36,7 @@
     -sudo systemctl start nginx
     -sudo systemctl enable nginx
     -copy code from dist (build files) to var/www/html/ 
-    -sudo cp -r dist/* var/www/html/
+    -sudo cp -r dist/* /var/www/html/
     -enable port: 80 of your instance
 - BACKEND
     - updated DB Password
@@ -57,17 +58,17 @@
 
 #  Nginx Config :
 
-    Frontend = http://15.207.249.235/
-    Backend  = http://15.207.249.235:7777/
+    Frontend = http://203.0.113.10/
+    Backend  = http://203.0.113.10:7777/
 
-    Domain name = devtinder.com => 15.207.249.235
+    Domain   = example.com => 203.0.113.10
 
-    Frontend = devtinder.com
-    Backend  = devtinder.com:7777 => devtinder.com/api   (we say it proxy pass /api to 7777)
+    Frontend = example.com
+    Backend  = example.com:7777 => example.com/api   (we say it proxy pass /api to 7777)
 
     
 
-        server_name 15.207.249.235;   (after server_name basically the domain name should be written i.e devtinder.com but as of now we don't have domain name so we  passed as 15.207.249.235) by default it was like  server_name _;
+        server_name 203.0.113.10;   (after server_name basically the domain name should be written i.e devtinder.com but as of now we don't have domain name so we  passed as 203.0.113.10) by default it was like  server_name _;
 
         location /api/ {
             proxy_pass http://localhost:7777/;
@@ -162,5 +163,41 @@
     - Write code for SESClient
     - Write code for Sending email address
     - Make the email dynamic by passing more params to the run function
+
+
+# Redeployment (Updating an Existing Deployment)
+
+## 1. Connect to the server
+    - chmod 400 "devTinder-secret.pem"   (only if permissions were reset)
+    - ssh -i "devTinder-secret.pem" ubuntu@<your-ec2-public-dns>
+    - ls            → list folders to find your project folders
+    - ls -d */      → list only folders
+
+    ## 2. Frontend (code or environment variable changes)
+    - cd Johaar-DevTinder-Frontend-MS
+    - git pull
+    - nano .env     → update frontend environment variables, if any
+    - npm install   → only if dependencies changed
+    - npm run build
+    - sudo cp -r dist/* /var/www/html/    (leading "/" is required)
+    - ls /var/www/html/    → verify index.html and the assets folder exist
+
+    > Frontend environment variables are baked in at build time, so run `npm run build` again after changing them.
+
+    ## 3. Backend (code or environment variable changes)
+    - cd Johaar-DevTinder-Backend-MS
+    - git pull
+    - npm install   → always run after git pull, new code may need new packages
+    - nano .env     → update backend environment variables (.env is not in Git)
+    - pm2 restart devTinder-backend --update-env
+    - pm2 logs devTinder-backend --lines 20   → confirm it started without errors
+    - pm2 list      → status should be "online"
+    - pm2 save
+
+    > `--update-env` makes pm2 load the changed environment variables.
+
+    ## 4. Nginx (only if the config changed)
+    - sudo nginx -t
+    - sudo systemctl restart nginx
 
 
