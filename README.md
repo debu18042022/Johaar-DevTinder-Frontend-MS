@@ -52,6 +52,7 @@
     - Exit nano (Ctrl+X) 
     - sudo nginx -t (To check for syntax errors || Test the config for errors)
     - restart nginx i.e sudo systemctl restart nginx
+    - Modify the BASE_URL to "/api" to frontend project
 
 
 #  Nginx Config :
@@ -81,3 +82,85 @@
         }
 
         
+# Adding a Custom Domain Name (GoDaddy → Cloudflare)
+
+**Domain Name** — human-readable address for a server (e.g. `devtinders.in`)
+**Registrar** — where you *buy* the domain (GoDaddy, Hostinger, Namecheap...)
+**DNS** — system that maps domain → IP and stores routing rules
+**Nameservers** — servers that actually *manage* your DNS records (can differ from registrar)
+**DNS Record** — a rule like A (domain→IP), CNAME (domain→domain), MX (mail)
+
+> Registrar = who you bought from. Nameservers = who controls where it points.
+
+## Steps
+1. Buy domain from any registrar.
+2. Add domain in Cloudflare → get 2 nameservers.
+3. In GoDaddy → Nameservers → switch to custom → enter Cloudflare's nameservers → save.
+4. Wait for propagation (min–48hrs but active in ~15min) → Cloudflare shows "Active".
+5. Add DNS records to point domain to your app (see below).
+6. Open ports 80/443 (and your backend port, e.g. 7777) in EC2 Security Group → Source: 0.0.0.0/0.
+7. Set up Nginx as reverse proxy on EC2 → forward port 80 to your pm2 app's port.
+8. For React/SPA apps: fix `try_files $uri $uri/ =404;` → `try_files $uri $uri/ /index.html;` in nginx config, so direct URL loads/refreshes (e.g. `/login`) don't 404.
+9. In Cloudflare → SSL/TLS → set mode to **Flexible** (if your origin server only serves plain HTTP, not HTTPS). Use Full/Full(strict) only if you've installed an SSL cert on the server itself.
+
+## Example: AWS EC2 (frontend + backend via pm2)
+| Type | Name | Content |
+|---|---|---|
+| A | @ | Elastic IP |
+| A | www | Elastic IP |
+| A | api | Elastic IP |
+
+- Use Elastic IP (static), not default EC2 IP.
+- Use Nginx to reverse-proxy pm2 app to ports 80/443.
+- Keep Proxy (orange cloud) ON for free SSL.
+
+## Common Error: Cloudflare 521 "Web server is down"
+- Means: Cloudflare reached your DNS fine, but your origin server refused the connection.
+- Check in order: (1) EC2 Security Group allows 80/443 from anywhere, (2) Nginx is running, (3) pm2 app is online, (4) Cloudflare SSL/TLS mode matches what your server actually supports (Flexible if origin is HTTP-only).
+
+
+# Sending Emails via Amazon SES (Simple Email Service : Email Sending and Receiving Service)
+
+    - Create an IAM user (this gives you permission to different services inside AWS)
+    - Give access to AmazonSESFullAccess
+        - Set permissions: select Attach policies directly (radio button) -> seacrch AmazonSES and select AmazonSESFullAccess
+    - Amazon SES: create an Identity
+    - Verify your email address Identity
+    - Verify your domain name [devtinders.in]
+        - Here will get the three CNAME records that we have to set in our DNS settings. (basically AmazonSES needs to verify that   devtinders.in is my domain)
+        - Login to cloudflare -> select records under DNS -> Add record
+            | Type | Name | Target |
+            | ---  |---   | ---    |
+            | CNAME| name | value |
+            | CNAME| name | value |
+            | CNAME| name | value | 
+        - Turn off Proxy status
+    - Production Access Request
+    Now to send an email we need AWS SDK and secret access key for the same IAM user that we created in sujeet's case the name is devtinder-ses.
+    - Install AWS SDK v3 : 
+    - Amazon SES examples using SDK for JavaScript (v3) [code Example]:
+     https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/javascriptv3/example_code/ses#code-examples
+    - Setup SES client but before that we need to install this package npm i @aws-sdk/client-ses
+        sesClient.js file
+        const { SESClient } = require("@aws-sdk/client-ses");
+        // Set the AWS Region.
+        const REGION = "us-east-1";
+        // Credentials are automatically resolved using the AWS SDK credential provider chain.
+        // For more information, see https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html
+        // Create SES service object.
+        const sesClient = new SESClient({
+            region: REGION,
+            credentials: {
+                AWS_ACCESS_KEY,
+                AWS_SECRET_KEY,
+            }
+        });
+        module.exports = { sesClient };
+
+    - Access Credentials should be created in IAM under SecurityCredentials Tab
+    - Add the Credentials to the env file
+    - Write code for SESClient
+    - Write code for Sending email address
+    - Make the email dynamic by passing more params to the run function
+
+
